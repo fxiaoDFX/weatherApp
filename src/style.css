@@ -1,3 +1,26 @@
 body {
-    background: grey;
+    width: 100vw;
+    height: 100vh;
+    background: url("./assets/background/winter.jpg");
+    background-size: 100vw 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: white;
+}
+
+.today.overview {
+    display: flex;
+    justify-content: space-between;
+}
+
+ul {
+    list-style: none;
+}
+
+.filter-white {
+    filter: brightness(0) invert(1);
 }

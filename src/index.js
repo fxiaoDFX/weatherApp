@@ -1,3 +1,5 @@
 import "./style.css"
+import rain from "./assets/svg/rain.svg"
 
-console.log("Hello World!")
+const currentWeatherImage = document.querySelector("#current-weather-image")
+currentWeatherImage.src = rain
