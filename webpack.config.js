@@ -6,7 +6,15 @@ module.exports = {
 
     devtool: "source-map",
 
-    entry: "./src/index.js",
+    devServer: {
+        static: "./dist",
+        liveReload: true,
+        hot: false,
+    },
+
+    entry: {
+        bundle: path.resolve(__dirname, "./src/index.js"),
+    },
 
     output: {
         path: path.resolve(__dirname, "dist"),
@@ -22,7 +30,7 @@ module.exports = {
             },
             {
                 test: /\.(png|svg|jpg|jpeg|gif)$/i,
-                use: "asset/resource",
+                type: "asset/resource",
             },
         ],
     },
@@ -32,10 +40,6 @@ module.exports = {
             template: "./src/template.html",
         }),
     ],
-
-    devServer: {
-        static: "./dist",
-    },
 
     optimization: {
         runtimeChunk: "single",
