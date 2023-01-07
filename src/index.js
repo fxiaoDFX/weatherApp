@@ -10,22 +10,45 @@ currentWeatherImage.src = rain
     const dateElement = document.querySelector(".main.date")
     const feelsLikeElement = document.getElementById("feels-like")
     const humidityElement = document.getElementById("humidity")
+    const forecastElement = document.getElementById("forecast")
 
     updateData()
     getCurrentTime()
 
     //*******
     async function updateData() {
-        const data = await fetchWeatherData(
+        const currentWeatherdata = await fetchWeatherData(
             "https://api.openweathermap.org/data/2.5/weather?q=De+Pere&units=imperial&appid=02b099a38aaee9f9a5aa9079418510c9"
         )
-        setWeatherToday(await data)
-        setWeatherInfo(await data)
+        const forecastData = await fetchWeatherData(
+            "https://api.openweathermap.org/data/2.5/forecast?units=imperial&lat=44.4493584&lon=-88.0599986&appid=02b099a38aaee9f9a5aa9079418510c9"
+        )
+        console.log("list", forecastData.list.length)
+
+        setWeatherToday(await currentWeatherdata)
+        setWeatherInfo(await currentWeatherdata)
+        setForecast(forecastData)
         const date = new Date()
         setDate()
         setTimeout(() => {
             updateData()
         }, 60 * 60 * 1000 - date.getMinutes() * 60 * 1000)
+    }
+
+    async function setForecast(data) {
+        const list = data.list
+        const forecast = []
+        list.forEach((day) => {
+            forecast.push(day)
+        })
+
+        console.log()
+        const date = new Date()
+        const today = date.getDay()
+        for (let i = 1; i < 8; i++) {
+            const day = getDay(today + i)
+            console.log(day)
+        }
     }
 
     async function setWeatherInfo(data) {
@@ -124,6 +147,7 @@ function getMonth(num) {
 }
 
 function getDay(num) {
+    num = num % 7
     switch (num) {
         case 0:
             return "Sunday"
