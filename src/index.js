@@ -14,23 +14,47 @@ import searchIcon from "./assets/svg/search.svg"
     const feelsLikeImgElement = document.getElementById("feels-like-image")
     const humidityImgElement = document.getElementById("humidity-image")
     const searchImgElement = document.getElementById("search-image")
+    const formElement = document.getElementById("search-form")
+    const input = document.getElementById("city-input")
 
     feelsLikeImgElement.src = thermostat
     humidityImgElement.src = hygrometer
     searchImgElement.src = searchIcon
 
-    updateData()
+    updateData("De+Pere")
     getCurrentTime()
 
+    formElement.addEventListener("submit", (e) => {
+        e.preventDefault()
+        const location = input.value.toLowerCase().trim().split(" ").join("+")
+        try {
+            updateData(location)
+            getCurrentTime()
+        } catch (err) {
+            console.log(`Error: ${err}`)
+        } finally {
+            input.value = ""
+        }
+    })
+
     //*******
-    async function updateData() {
+    async function updateData(location) {
         const currentWeatherdata = await fetchWeatherData(
-            "https://api.openweathermap.org/data/2.5/weather?q=De+Pere&units=imperial&appid=02b099a38aaee9f9a5aa9079418510c9"
+            `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=imperial&appid=02b099a38aaee9f9a5aa9079418510c9`
         )
+
+        let lon, lat
+        try {
+            lon = currentWeatherdata.coord.lon
+            lat = currentWeatherdata.coord.lat
+            timezone = currentWeatherdata.timezone
+        } catch (err) {
+            console.log(`Error: ${err}, coordinates not found`)
+        }
+
         const forecastData = await fetchWeatherData(
-            "https://api.openweathermap.org/data/2.5/forecast?units=imperial&lat=44.4493584&lon=-88.0599986&appid=02b099a38aaee9f9a5aa9079418510c9"
+            `https://api.openweathermap.org/data/2.5/forecast?units=imperial&lat=${lat}&lon=${lon}&appid=02b099a38aaee9f9a5aa9079418510c9`
         )
-        console.log("list", forecastData.list.length)
 
         setWeatherToday(await currentWeatherdata)
         setWeatherInfo(await currentWeatherdata)
@@ -47,7 +71,7 @@ import searchIcon from "./assets/svg/search.svg"
     }
 
     async function setForecast(data) {
-        if (!data) return
+        if (data != 200) return
 
         const list = data.list
         const forecast = []
@@ -55,7 +79,6 @@ import searchIcon from "./assets/svg/search.svg"
             forecast.push(day)
         })
 
-        console.log()
         clearElements(forecastElement)
 
         const date = new Date()
@@ -87,6 +110,7 @@ import searchIcon from "./assets/svg/search.svg"
     }
 
     async function setWeatherInfo(data) {
+        if (data.cod != 200) return
         let temp = data.main.feels_like
         temp = round(parseFloat(temp))
         const humidity = data.main.humidity
@@ -96,6 +120,7 @@ import searchIcon from "./assets/svg/search.svg"
     }
 
     async function setWeatherToday(data) {
+        if (data.cod != 200) return
         const description = capitalize(data.weather[0].description)
         const temperature = data.main.temp + " °F"
         const city = data.name
@@ -103,7 +128,6 @@ import searchIcon from "./assets/svg/search.svg"
 
         descriptionElement.textContent = description
         currentWeatherImage.src = getIconUrl(icon)
-        console.log(currentWeatherImage.src)
         tempElement.textContent = round(parseFloat(temperature)) + " °F"
         cityElement.textContent = city
     }
@@ -216,6 +240,5 @@ function capitalize(string) {
 }
 
 function round(num) {
-    console.log(num)
     return Math.round(num * 10) / 10
 }

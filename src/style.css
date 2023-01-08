@@ -33,6 +33,10 @@ ul {
         "img stat";
 }
 
+.filter-white {
+    filter: brightness(0) invert(1);
+}
+
 #feels-like-image,
 #humidity-image {
     filter: brightness(0) invert(1);
