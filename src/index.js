@@ -1,9 +1,9 @@
 import "./style.css"
-import rain from "./assets/svg/rain.svg"
-
-const currentWeatherImage = document.querySelector("#current-weather-image")
-currentWeatherImage.src = rain
+import thermostat from "./assets/svg/thermostat.svg"
+import hygrometer from "./assets/svg/humidity.svg"
+import searchIcon from "./assets/svg/search.svg"
 ;(async function () {
+    const currentWeatherImage = document.querySelector("#current-weather-image")
     const descriptionElement = document.querySelector(".main.description")
     const tempElement = document.querySelector(".main.temperature")
     const cityElement = document.querySelector(".main.city")
@@ -11,6 +11,13 @@ currentWeatherImage.src = rain
     const feelsLikeElement = document.getElementById("feels-like")
     const humidityElement = document.getElementById("humidity")
     const forecastElement = document.getElementById("forecast")
+    const feelsLikeImgElement = document.getElementById("feels-like-image")
+    const humidityImgElement = document.getElementById("humidity-image")
+    const searchImgElement = document.getElementById("search-image")
+
+    feelsLikeImgElement.src = thermostat
+    humidityImgElement.src = hygrometer
+    searchImgElement.src = searchIcon
 
     updateData()
     getCurrentTime()
@@ -35,7 +42,13 @@ currentWeatherImage.src = rain
         }, 60 * 60 * 1000 - date.getMinutes() * 60 * 1000)
     }
 
+    function getIconUrl(icon) {
+        return `https://openweathermap.org/img/wn/${icon}@2x.png`
+    }
+
     async function setForecast(data) {
+        if (!data) return
+
         const list = data.list
         const forecast = []
         list.forEach((day) => {
@@ -43,11 +56,33 @@ currentWeatherImage.src = rain
         })
 
         console.log()
+        clearElements(forecastElement)
+
         const date = new Date()
         const today = date.getDay()
         for (let i = 1; i < 8; i++) {
             const day = getDay(today + i)
-            console.log(day)
+            const temp = forecast[i].main.temp
+            const weather = forecast[i].weather[0].main.toLowerCase()
+
+            const container = document.createElement("li")
+            const dayDiv = document.createElement("div")
+            const tempDiv = document.createElement("div")
+            const img = document.createElement("img")
+
+            dayDiv.textContent = day
+            tempDiv.textContent = round(parseFloat(temp)) + " °F"
+            img.alt = weather
+            img.src = getIconUrl(forecast[i].weather[0].icon)
+
+            container.append(dayDiv, tempDiv, img)
+            forecastElement.append(container)
+        }
+    }
+
+    function clearElements(container) {
+        while (container.hasChildNodes()) {
+            container.removeChild(container.childNodes[0])
         }
     }
 
@@ -64,8 +99,11 @@ currentWeatherImage.src = rain
         const description = capitalize(data.weather[0].description)
         const temperature = data.main.temp + " °F"
         const city = data.name
+        const icon = data.weather[0].icon
 
         descriptionElement.textContent = description
+        currentWeatherImage.src = getIconUrl(icon)
+        console.log(currentWeatherImage.src)
         tempElement.textContent = round(parseFloat(temperature)) + " °F"
         cityElement.textContent = city
     }

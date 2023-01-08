@@ -26,6 +26,53 @@ ul {
     justify-content: space-evenly;
 }
 
-.filter-white {
+.weather-info ul li {
+    display: grid;
+    grid-template-areas:
+        "img title"
+        "img stat";
+}
+
+#feels-like-image,
+#humidity-image {
+    filter: brightness(0) invert(1);
+    grid-area: img;
+}
+
+.info.title {
+    grid-area: title;
+}
+
+#feels-like,
+#humidity {
+    grid-area: stat;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+input {
+    color: white;
+    background: none;
+    border: none;
+    border-bottom: 2px solid white;
+}
+
+#search-button {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: none;
+}
+
+#search-image {
+    width: 1.5em;
+    height: 1.5em;
     filter: brightness(0) invert(1);
 }

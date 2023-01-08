@@ -14,14 +14,30 @@
                 <div class="main date">Thurday, 5th January 2023</div>
                 <div id="clock" class="main time">1:00 PM</div>
                 <div class="main temperature">32 °F</div>
+                <form id="search-form" action="#">
+                    <input
+                        type="text"
+                        id="city-input"
+                        placeholder="Search City..."
+                    />
+                    <button id="search-button" type="submit">
+                        <img id="search-image" src="#" alt="search" />
+                    </button>
+                </form>
             </div>
             <div class="weather-info container">
                 <ul>
                     <li>
+                        <img id="feels-like-image" src="#" alt="temp image" />
                         <div class="info title">Feels Like</div>
                         <div id="feels-like">-100 °F</div>
                     </li>
                     <li>
+                        <img
+                            id="humidity-image"
+                            src="#"
+                            alt="current humidity"
+                        />
                         <div class="info title">Humidity</div>
                         <div id="humidity">10%</div>
                     </li>
