@@ -21,15 +21,21 @@ import searchIcon from "./assets/svg/search.svg"
     humidityImgElement.src = hygrometer
     searchImgElement.src = searchIcon
 
-    updateData("De+Pere")
-    getCurrentTime()
+    let timer = 0
+    ;(async () => {
+        timer = await updateData("De+Pere")
+        console.log(timer)
+        timer()
+    })()
 
     formElement.addEventListener("submit", (e) => {
         e.preventDefault()
         const location = input.value.toLowerCase().trim().split(" ").join("+")
         try {
-            updateData(location)
-            getCurrentTime()
+            timer.stop()
+            ;(async () => {
+                timer = updateData(location)
+            })()
         } catch (err) {
             console.log(`Error: ${err}`)
         } finally {
@@ -43,7 +49,7 @@ import searchIcon from "./assets/svg/search.svg"
             `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=imperial&appid=02b099a38aaee9f9a5aa9079418510c9`
         )
 
-        let lon, lat
+        let lon, lat, timezone
         try {
             lon = currentWeatherdata.coord.lon
             lat = currentWeatherdata.coord.lat
@@ -56,6 +62,7 @@ import searchIcon from "./assets/svg/search.svg"
             `https://api.openweathermap.org/data/2.5/forecast?units=imperial&lat=${lat}&lon=${lon}&appid=02b099a38aaee9f9a5aa9079418510c9`
         )
 
+        let timer = getCurrentTime(timezone)
         setWeatherToday(await currentWeatherdata)
         setWeatherInfo(await currentWeatherdata)
         setForecast(forecastData)
@@ -64,6 +71,7 @@ import searchIcon from "./assets/svg/search.svg"
         setTimeout(() => {
             updateData()
         }, 60 * 60 * 1000 - date.getMinutes() * 60 * 1000)
+        return timer
     }
 
     function getIconUrl(icon) {
@@ -146,9 +154,11 @@ async function fetchWeatherData(url) {
     }
 }
 
-function getCurrentTime() {
+function getCurrentTime(timezone) {
+    const offset = timezone / 3600
     const date = new Date()
-    let hh = date.getHours()
+
+    let hh = (date.getUTCHours() + offset) % 12
     let mm = date.getMinutes()
     let ss = date.getSeconds()
     const session = hh < 12 ? "AM" : "PM"
@@ -157,11 +167,20 @@ function getCurrentTime() {
     mm = mm < 10 ? "0" + mm : mm
     ss = ss < 10 ? "0" + ss : ss
 
-    const time = `${hh % 12}:${mm}:${ss} ${session}`
+    const time = `${hh}:${mm}:${ss} ${session}`
     document.getElementById("clock").textContent = time
-    let t = setTimeout(() => {
-        getCurrentTime()
+    let timer = setTimeout(() => {
+        getCurrentTime(timezone)
     }, 1000)
+
+    return stopTimer
+
+    function stopTimer() {
+        if (timer) {
+            clearTimeout(timer)
+            timer = 0
+        }
+    }
 }
 
 function getDateString() {
