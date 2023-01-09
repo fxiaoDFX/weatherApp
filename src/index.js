@@ -17,25 +17,19 @@ import searchIcon from "./assets/svg/search.svg"
     const formElement = document.getElementById("search-form")
     const input = document.getElementById("city-input")
 
+    let timer = null
+
     feelsLikeImgElement.src = thermostat
     humidityImgElement.src = hygrometer
     searchImgElement.src = searchIcon
 
-    let timer = 0
-    ;(async () => {
-        timer = await updateData("De+Pere")
-        console.log(timer)
-        timer()
-    })()
+    updateData("De+Pere")
 
     formElement.addEventListener("submit", (e) => {
         e.preventDefault()
         const location = input.value.toLowerCase().trim().split(" ").join("+")
         try {
-            timer.stop()
-            ;(async () => {
-                timer = updateData(location)
-            })()
+            updateData(location)
         } catch (err) {
             console.log(`Error: ${err}`)
         } finally {
@@ -45,33 +39,39 @@ import searchIcon from "./assets/svg/search.svg"
 
     //*******
     async function updateData(location) {
-        const currentWeatherdata = await fetchWeatherData(
+        let isError = false
+        const currentWeatherData = await fetchWeatherData(
             `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=imperial&appid=02b099a38aaee9f9a5aa9079418510c9`
         )
 
-        let lon, lat, timezone
+        let lon, lat
         try {
-            lon = currentWeatherdata.coord.lon
-            lat = currentWeatherdata.coord.lat
-            timezone = currentWeatherdata.timezone
+            lon = currentWeatherData.coord.lon
+            lat = currentWeatherData.coord.lat
         } catch (err) {
             console.log(`Error: ${err}, coordinates not found`)
+            isError = true
         }
+
+        if (!isError) {
+            if (timer) clearInterval(timer)
+        } else return
 
         const forecastData = await fetchWeatherData(
             `https://api.openweathermap.org/data/2.5/forecast?units=imperial&lat=${lat}&lon=${lon}&appid=02b099a38aaee9f9a5aa9079418510c9`
         )
 
-        let timer = getCurrentTime(timezone)
-        setWeatherToday(await currentWeatherdata)
-        setWeatherInfo(await currentWeatherdata)
-        setForecast(forecastData)
+        timer = setInterval(async () => {
+            getCurrentTime(await currentWeatherData)
+        }, 1000)
+        setWeatherToday(await currentWeatherData)
+        setWeatherInfo(await currentWeatherData)
+        setForecast(await forecastData)
         const date = new Date()
         setDate()
         setTimeout(() => {
             updateData()
         }, 60 * 60 * 1000 - date.getMinutes() * 60 * 1000)
-        return timer
     }
 
     function getIconUrl(icon) {
@@ -79,8 +79,12 @@ import searchIcon from "./assets/svg/search.svg"
     }
 
     async function setForecast(data) {
-        if (data != 200) return
+        if (data.cod != 200) {
+            console.log("Error:", data)
+            return
+        }
 
+        console.log("wtf")
         const list = data.list
         const forecast = []
         list.forEach((day) => {
@@ -154,11 +158,14 @@ async function fetchWeatherData(url) {
     }
 }
 
-function getCurrentTime(timezone) {
+async function getCurrentTime(data) {
+    if (data.cod != 200) return
+    const timezone = data.timezone
     const offset = timezone / 3600
     const date = new Date()
 
     let hh = (date.getUTCHours() + offset) % 12
+    hh = hh === 0 ? 12 : hh
     let mm = date.getMinutes()
     let ss = date.getSeconds()
     const session = hh < 12 ? "AM" : "PM"
@@ -169,18 +176,6 @@ function getCurrentTime(timezone) {
 
     const time = `${hh}:${mm}:${ss} ${session}`
     document.getElementById("clock").textContent = time
-    let timer = setTimeout(() => {
-        getCurrentTime(timezone)
-    }, 1000)
-
-    return stopTimer
-
-    function stopTimer() {
-        if (timer) {
-            clearTimeout(timer)
-            timer = 0
-        }
-    }
 }
 
 function getDateString() {

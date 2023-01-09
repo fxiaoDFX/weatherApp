@@ -80,3 +80,7 @@ input {
     height: 1.5em;
     filter: brightness(0) invert(1);
 }
+
+img[alt~="snow"] {
+    filter: brightness(0) invert(1);
+}
