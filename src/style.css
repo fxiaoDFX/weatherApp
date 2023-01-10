@@ -7,9 +7,10 @@ body {
     flex-direction: column;
     justify-content: space-between;
     margin: 0;
-    padding: 0;
+    padding: 4px 12px;
     box-sizing: border-box;
     color: white;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .today.overview {
@@ -91,4 +92,9 @@ img[alt~="snow"] {
     margin-top: 8px;
     color: red;
     font-size: 12px;
+}
+
+#current-weather-image {
+    height: 65px;
+    object-fit: none;
 }

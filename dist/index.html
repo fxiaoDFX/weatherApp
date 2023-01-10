@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Weather App</title>
+    <script defer src="runtime.bundle.js"></script><script defer src="bundle.bundle.js"></script></head>
+    <body>
+        <div class="today overview">
+            <div class="weather-today container">
+                <div class="main description">Rainy</div>
+                <img id="current-weather-image" class="filter-white" src="#" />
+                <div class="main city">Green Bay</div>
+                <div class="main date">Thurday, 5th January 2023</div>
+                <div id="clock" class="main time">1:00 PM</div>
+                <div class="main temperature">32 °F</div>
+                <form id="search-form" action="#">
+                    <input
+                        type="text"
+                        id="city-input"
+                        placeholder="Search City..."
+                    />
+                    <button id="search-button" type="submit">
+                        <img id="search-image" src="#" alt="search" />
+                    </button>
+                </form>
+                <div id="error-message"></div>
+            </div>
+            <div class="weather-info container">
+                <ul>
+                    <li>
+                        <img id="feels-like-image" src="#" alt="temp image" />
+                        <div class="info title">Feels Like</div>
+                        <div id="feels-like">-100 °F</div>
+                    </li>
+                    <li>
+                        <img
+                            id="humidity-image"
+                            src="#"
+                            alt="current humidity"
+                        />
+                        <div class="info title">Humidity</div>
+                        <div id="humidity">10%</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="week overview">
+            7-Day Forecast
+            <ul id="forecast">
+                <li id="1" class="day container">
+                    <div class="day name">Sunday</div>
+                    <div class="day temp"></div>
+                    <div class="day image"></div>
+                </li>
+                <li id="2" class="day conatainer">
+                    <div class="day name">Monday</div>
+                    <div class="day temp"></div>
+                    <div class="day image"></div>
+                </li>
+                <li id="3" class="day container">
+                    <div class="day name">Tuesday</div>
+                    <div class="day temp"></div>
+                    <div class="day image"></div>
+                </li>
+                <li id="4" class="day container">
+                    <div class="day name">Wednesday</div>
+                    <div class="day temp"></div>
+                    <div class="day image"></div>
+                </li>
+                <li id="5" class="day container">
+                    <div class="day name">Thurday</div>
+                    <div class="day temp"></div>
+                    <div class="day image"></div>
+                </li>
+                <li id="6" class="day container">
+                    <div class="day name">Friday</div>
+                    <div class="day temp"></div>
+                    <div class="day image"></div>
+                </li>
+                <li id="7" class="day container">
+                    <div class="day name">Saturday</div>
+                    <div class="day temp"></div>
+                    <div class="day image"></div>
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>
